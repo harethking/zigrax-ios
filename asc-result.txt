@@ -1,0 +1,3 @@
+scripts/asc.rb:51:in `all': GET /v1/apps/6835940613/appInfos: ["NOT_AUTHORIZED: Provide a properly configured and signed bearer token, and make sure that it has not expired. Learn more about Generating Tokens for API Requests https://developer.apple.com/go/?id=api-generating-tokens "] (RuntimeError)
+	from scripts/asc.rb:65:in `<main>'
+exit 1 Tue Nov 17 20:10:45 UTC 2026
