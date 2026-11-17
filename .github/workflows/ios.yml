@@ -50,7 +50,7 @@ jobs:
           if [ ! -f "$DATA/Documents/selftest.json" ]; then
             echo "no self-test result"
             xcrun simctl spawn "$DEV" launchctl list | grep -i zigrax || echo "app not running"
-            ls -t ~/Library/Logs/DiagnosticReports 2>/dev/null | grep -i zigrax | head -3 | while read f; do echo "== $f"; head -c 4000 ~/Library/Logs/DiagnosticReports/"$f"; done
+            ls -t ~/Library/Logs/DiagnosticReports 2>/dev/null | grep -i zigrax | head -3 | while read f; do echo "== $f"; python3 -c "import json,sys;t=open(sys.argv[1]).read();j=json.loads(t[t.index(chr(10))+1:]);print(json.dumps(j.get('termination'),indent=1)[:3000]);print(j.get('asi'))" ~/Library/Logs/DiagnosticReports/"$f"; done
             xcrun simctl spawn "$DEV" log show --last 5m --style compact --predicate 'process == "ZIGRAX"' 2>/dev/null | tail -n 60
             exit 1
           fi
