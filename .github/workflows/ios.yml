@@ -84,17 +84,31 @@ jobs:
         run: |
           mkdir -p ~/private_keys
           printf '%s' "$ASC_KEY_P8" > ~/private_keys/AuthKey.p8
+      - name: Signing (temporary distribution certificate and App Store profile)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          export ASC_KEY_PATH=~/private_keys/AuthKey.p8
+          export KEYCHAIN=$RUNNER_TEMP/zx.keychain-db KEYCHAIN_PASS=$(uuidgen)
+          echo "KEYCHAIN=$KEYCHAIN" >> $GITHUB_ENV
+          security create-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          sudo gem install fastlane -N --quiet >/dev/null
+          ruby scripts/signing.rb setup
+          security find-identity -v -p codesigning "$KEYCHAIN"
       - name: Archive
         run: |
           set -o pipefail
           xcodegen generate
           xcodebuild -project ZIGRAX.xcodeproj -scheme ZIGRAX -configuration Release \
             -destination 'generic/platform=iOS' -archivePath build/ZIGRAX.xcarchive \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath ~/private_keys/AuthKey.p8 \
-            -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" \
-            -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}" \
             ZX_TEAM_ID="${{ secrets.APPLE_TEAM_ID }}" \
+            CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$ZX_PROFILE_NAME" \
+            OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN" \
             CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
             archive | tail -n 60
       - name: Upload to App Store Connect
@@ -106,15 +120,25 @@ jobs:
             <key>method</key><string>app-store-connect</string>
             <key>destination</key><string>upload</string>
             <key>teamID</key><string>${{ secrets.APPLE_TEAM_ID }}</string>
-            <key>signingStyle</key><string>automatic</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>signingCertificate</key><string>Apple Distribution</string>
+            <key>provisioningProfiles</key><dict><key>com.hareth.zigrax</key><string>$ZX_PROFILE_NAME</string></dict>
             <key>manageAppVersionAndBuildNumber</key><false/>
           </dict></plist>
           EOF
           xcodebuild -exportArchive -archivePath build/ZIGRAX.xcarchive -exportPath build/export \
-            -exportOptionsPlist ExportOptions.plist -allowProvisioningUpdates \
+            -exportOptionsPlist ExportOptions.plist \
             -authenticationKeyPath ~/private_keys/AuthKey.p8 \
             -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" \
             -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}"
+      - name: Revoke the temporary certificate
+        if: always()
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          ASC_KEY_PATH=~/private_keys/AuthKey.p8 ruby scripts/signing.rb cleanup || true
+          [ -n "$KEYCHAIN" ] && security delete-keychain "$KEYCHAIN" || true
       - name: Clean up the key
         if: always()
         run: rm -rf ~/private_keys
