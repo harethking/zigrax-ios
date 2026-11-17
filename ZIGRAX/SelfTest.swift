@@ -4,7 +4,19 @@ import WebKit
 /// Only when launched with -zxSelfTest (the cloud build does this on the simulator): checks that the
 /// page has everything it needs inside WKWebView and prints one line "ZXSELFTEST {...}".
 enum SelfTest {
+    /// the cloud build reads Documents/selftest.json from the simulator
+    private static func save(_ s: String) {
+        print("ZXSELFTEST \(s)"); fflush(stdout)
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            try? s.write(to: dir.appendingPathComponent("selftest.json"), atomically: true, encoding: .utf8)
+        }
+    }
+
+    private static var done = false
+
     static func run(_ web: WKWebView) {
+        if done { return }
+        done = true
         let js = """
         const out = {};
         const t = (ms) => new Promise(r => setTimeout(r, ms));
@@ -39,8 +51,8 @@ enum SelfTest {
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             web.callAsyncJavaScript(js, arguments: [:], in: nil, in: .page) { result in
                 switch result {
-                case .success(let v): print("ZXSELFTEST \(v)"); fflush(stdout)
-                case .failure(let e): print("ZXSELFTEST {\"error\":\"\(e.localizedDescription)\"}"); fflush(stdout)
+                case .success(let v): save("\(v)")
+                case .failure(let e): save("{\"error\":\"\(e.localizedDescription)\"}")
                 }
             }
         }

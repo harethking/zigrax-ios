@@ -30,7 +30,6 @@ jobs:
           xcodebuild -project ZIGRAX.xcodeproj -scheme ZIGRAX -configuration Debug \
             -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build CODE_SIGNING_ALLOWED=NO \
-            ZX_ADMOB_APP_ID="${{ vars.ZX_ADMOB_APP_ID || 'ca-app-pub-3940256099942544~1458002511' }}" \
             build | tail -n 80
       - name: Run the app with the self-test
         run: |
@@ -39,13 +38,16 @@ jobs:
           xcrun simctl boot "$DEV" || true
           xcrun simctl bootstatus "$DEV" -b
           xcrun simctl install "$DEV" build/Build/Products/Debug-iphonesimulator/ZIGRAX.app
-          ( xcrun simctl launch --console-pty "$DEV" com.hareth.zigrax -zxSelfTest > selftest.log 2>&1 & )
-          for i in $(seq 1 90); do grep -q ZXSELFTEST selftest.log && break; sleep 2; done
+          xcrun simctl launch "$DEV" com.hareth.zigrax -zxSelfTest
+          DATA=$(xcrun simctl get_app_container "$DEV" com.hareth.zigrax data)
+          for i in $(seq 1 90); do [ -f "$DATA/Documents/selftest.json" ] && break; sleep 2; done
+          echo "waited $((i*2))s"
           sleep 2
           xcrun simctl io "$DEV" screenshot screen-home.png
-          cat selftest.log | tail -n 40
-          grep ZXSELFTEST selftest.log > result.txt || { echo "no self-test result"; exit 1; }
-          cat result.txt
+          sips -Z 520 -s format jpeg -s formatOptions 60 screen-home.png --out shot.jpg >/dev/null
+          echo "SHOT_BEGIN"; base64 -i shot.jpg | tr -d '\n'; echo; echo "SHOT_END"
+          [ -f "$DATA/Documents/selftest.json" ] || { echo "no self-test result"; exit 1; }
+          echo "ZXSELFTEST $(cat "$DATA/Documents/selftest.json")" | tee result.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -84,8 +86,6 @@ jobs:
             -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" \
             -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}" \
             ZX_TEAM_ID="${{ secrets.APPLE_TEAM_ID }}" \
-            ZX_ADMOB_APP_ID="${{ vars.ZX_ADMOB_APP_ID }}" \
-            ZX_AD_REWARDED="${{ vars.ZX_AD_REWARDED }}" \
             CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
             archive | tail -n 60
       - name: Upload to App Store Connect

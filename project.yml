@@ -112,7 +112,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.hareth.zigrax
         PRODUCT_NAME: ZIGRAX
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        ZX_ADMOB_APP_ID: "ca-app-pub-3940256099942544~1458002511"
-        ZX_AD_REWARDED: ""
+        ZX_ADMOB_APP_ID: "ca-app-pub-5280252229342054~1276354300"
+        ZX_AD_REWARDED: "ca-app-pub-5280252229342054/3329023760"
         ZX_TEAM_ID: ""
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
