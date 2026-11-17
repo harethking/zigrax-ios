@@ -1,0 +1,31 @@
+name: App Store Connect
+
+on:
+  push:
+    branches: [main]
+    paths: [".asc-run"]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "setup or submit"
+        default: setup
+
+jobs:
+  asc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          MODE: ${{ inputs.mode }}
+        run: |
+          mkdir -p ~/k && printf '%s' "$ASC_KEY_P8" > ~/k/AuthKey.p8
+          [ -n "$MODE" ] || MODE=$(head -1 .asc-run | tr -d '[:space:]')
+          echo "mode $MODE"
+          ASC_KEY_PATH=~/k/AuthKey.p8 ruby scripts/asc.rb "$MODE"
+      - if: always()
+        run: rm -rf ~/k
