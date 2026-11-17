@@ -48,12 +48,18 @@ enum SelfTest {
         out.pageErrors = (window.__zxErrs || []).slice(0, 5);
         return JSON.stringify(out);
         """
+        // plain evaluateJavaScript only (the Swift-only WebKit helpers need a newer iOS)
+        let start = "window.__zxST=null;(async()=>{" + js + "})().then(v=>{window.__zxST=v}).catch(e=>{window.__zxST=JSON.stringify({error:String(e)})});0"
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            web.callAsyncJavaScript(js, arguments: [:], in: nil, in: .page) { result in
-                switch result {
-                case .success(let v): save("\(v)")
-                case .failure(let e): save("{\"error\":\"\(e.localizedDescription)\"}")
-                }
+            web.evaluateJavaScript(start, completionHandler: nil)
+            poll(web, 0)
+        }
+    }
+
+    private static func poll(_ web: WKWebView, _ n: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            web.evaluateJavaScript("window.__zxST") { v, _ in
+                if let s = v as? String { save(s) } else if n < 120 { poll(web, n + 1) } else { save("{\"error\":\"timeout\"}") }
             }
         }
     }

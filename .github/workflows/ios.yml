@@ -31,6 +31,8 @@ jobs:
             -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build CODE_SIGNING_ALLOWED=NO \
             build | tail -n 80
+          xcrun --sdk iphonesimulator --show-sdk-version
+          otool -L build/Build/Products/Debug-iphonesimulator/ZIGRAX.app/ZIGRAX.debug.dylib 2>/dev/null | grep -i swift || true
       - name: Run the app with the self-test
         run: |
           DEV=$(xcrun simctl list devices available -j | python3 -c "import json,sys;d=json.load(sys.stdin)['devices'];print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")

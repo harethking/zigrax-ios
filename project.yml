@@ -116,3 +116,4 @@ targets:
         ZX_AD_REWARDED: "ca-app-pub-5280252229342054/3329023760"
         ZX_TEAM_ID: ""
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        OTHER_LDFLAGS: ["$(inherited)", "-Xlinker", "-weak-lswiftWebKit"]
