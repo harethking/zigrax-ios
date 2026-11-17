@@ -29,7 +29,14 @@ def api(method, path, body = nil)
   req["Authorization"] = "Bearer #{token}"
   req["Content-Type"] = "application/json"
   req.body = body.to_json if body
-  res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) { |h| h.request(req) }
+  res = nil
+  8.times do |n|
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) { |h| h.request(req) }
+    break unless res.code.to_i == 401 || res.code.to_i >= 500
+    sleep 6 * (n + 1)   # Apple's sign-in service is recovering from an outage: retry with a fresh token
+    @tok = nil
+    req["Authorization"] = "Bearer #{token}"
+  end
   data = res.body.to_s.empty? ? {} : JSON.parse(res.body)
   unless res.code.to_i < 300
     errs = (data["errors"] || []).map { |e| "#{e['code']}: #{e['detail']} #{e.dig('source', 'pointer')}" }
