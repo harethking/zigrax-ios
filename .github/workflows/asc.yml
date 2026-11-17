@@ -10,6 +10,9 @@ on:
         description: "setup or submit"
         default: setup
 
+permissions:
+  contents: write
+
 jobs:
   asc:
     runs-on: ubuntu-latest
@@ -27,6 +30,9 @@ jobs:
           mkdir -p ~/k && printf '%s' "$ASC_KEY_P8" > ~/k/AuthKey.p8
           [ -n "$MODE" ] || MODE=$(head -1 .asc-run | tr -d '[:space:]')
           echo "mode $MODE"
-          ASC_KEY_PATH=~/k/AuthKey.p8 ruby scripts/asc.rb "$MODE"
+          ASC_KEY_PATH=~/k/AuthKey.p8 ruby scripts/asc.rb "$MODE" 2>&1 | tee asc-result.txt; echo "exit ${PIPESTATUS[0]} $(date -u)" >> asc-result.txt
       - if: always()
-        run: rm -rf ~/k
+        run: |
+          rm -rf ~/k
+          git config user.name "zigrax-ci"; git config user.email "zigrax-ci@users.noreply.github.com"
+          git add asc-result.txt && git commit -qm "asc result [skip ci]" && git push -q || true
