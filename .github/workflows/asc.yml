@@ -23,6 +23,7 @@ jobs:
           ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
           MODE: ${{ inputs.mode }}
         run: |
+          sudo gem install fastlane -N --quiet >/dev/null
           mkdir -p ~/k && printf '%s' "$ASC_KEY_P8" > ~/k/AuthKey.p8
           [ -n "$MODE" ] || MODE=$(head -1 .asc-run | tr -d '[:space:]')
           echo "mode $MODE"

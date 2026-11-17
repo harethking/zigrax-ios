@@ -17,13 +17,10 @@ SUBTITLE = "تحليل وألغاز وافتتاحيات"
 def b64(s) = Base64.urlsafe_encode64(s, padding: false)
 
 def token
-  key = OpenSSL::PKey::EC.new(File.read(ENV.fetch("ASC_KEY_PATH")))
-  head = b64({ alg: "ES256", kid: ENV.fetch("ASC_KEY_ID"), typ: "JWT" }.to_json)
-  body = b64({ iss: ENV.fetch("ASC_ISSUER_ID"), iat: Time.now.to_i, exp: Time.now.to_i + 1100, aud: "appstoreconnect-v1" }.to_json)
-  der = key.sign(OpenSSL::Digest::SHA256.new, "#{head}.#{body}")
-  asn = OpenSSL::ASN1.decode(der)
-  sig = asn.value.map { |i| i.value.to_s(2).rjust(32, "\x00".b)[-32..] }.join
-  "#{head}.#{body}.#{b64(sig)}"
+  require "spaceship"
+  @tok ||= Spaceship::ConnectAPI::Token.create(key_id: ENV.fetch("ASC_KEY_ID"), issuer_id: ENV.fetch("ASC_ISSUER_ID"), filepath: ENV.fetch("ASC_KEY_PATH"))
+  @tok.refresh! if @tok.expired?
+  @tok.text
 end
 
 def api(method, path, body = nil)
