@@ -38,7 +38,8 @@ jobs:
           xcrun simctl boot "$DEV" || true
           xcrun simctl bootstatus "$DEV" -b
           xcrun simctl install "$DEV" build/Build/Products/Debug-iphonesimulator/ZIGRAX.app
-          xcrun simctl launch "$DEV" com.hareth.zigrax -zxSelfTest
+          sleep 20
+          for n in 1 2 3 4 5; do xcrun simctl launch "$DEV" com.hareth.zigrax -zxSelfTest && break; echo "launch retry $n"; sleep 15; done
           DATA=$(xcrun simctl get_app_container "$DEV" com.hareth.zigrax data)
           for i in $(seq 1 90); do [ -f "$DATA/Documents/selftest.json" ] && break; sleep 2; done
           echo "waited $((i*2))s"
@@ -46,7 +47,13 @@ jobs:
           xcrun simctl io "$DEV" screenshot screen-home.png
           sips -Z 520 -s format jpeg -s formatOptions 60 screen-home.png --out shot.jpg >/dev/null
           echo "SHOT_BEGIN"; base64 -i shot.jpg | tr -d '\n'; echo; echo "SHOT_END"
-          [ -f "$DATA/Documents/selftest.json" ] || { echo "no self-test result"; exit 1; }
+          if [ ! -f "$DATA/Documents/selftest.json" ]; then
+            echo "no self-test result"
+            xcrun simctl spawn "$DEV" launchctl list | grep -i zigrax || echo "app not running"
+            ls -t ~/Library/Logs/DiagnosticReports 2>/dev/null | grep -i zigrax | head -3 | while read f; do echo "== $f"; head -c 4000 ~/Library/Logs/DiagnosticReports/"$f"; done
+            xcrun simctl spawn "$DEV" log show --last 5m --style compact --predicate 'process == "ZIGRAX"' 2>/dev/null | tail -n 60
+            exit 1
+          fi
           echo "ZXSELFTEST $(cat "$DATA/Documents/selftest.json")" | tee result.txt
       - uses: actions/upload-artifact@v4
         if: always()
