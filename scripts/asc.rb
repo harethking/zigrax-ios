@@ -85,7 +85,9 @@ when "setup"
       want[k] =
         case k
         when "messagingAndChat", "userGeneratedContent", "advertising" then true
-        when "gambling", "lootBox", "unrestrictedWebAccess", "seventeenPlus", "contests", "ageAssurance",
+        when "socialMedia", "socialMediaAgeRestricted" then false
+        when "gracRatingClassificationNumber" then nil
+        when "gambling", "lootBox", "unrestrictedWebAccess", "seventeenPlus", "ageAssurance",
              "parentalControls", "healthOrWellnessTopics" then false
         when "kidsAgeBand", "ageRatingOverride", "ageRatingOverrideV2", "koreaAgeRatingOverride", "developerAgeRatingInfoUrl" then nil
         else cur[k].is_a?(TrueClass) || cur[k].is_a?(FalseClass) ? false : "NONE"
@@ -102,7 +104,7 @@ when "setup"
   end
 
   # 3. price: free, base country USA
-  free = all("/v1/apps/#{APP}/appPricePoints?filter[territory]=USA&limit=200").find { |p| p.dig("attributes", "customerPrice").to_f == 0.0 }
+  free = (all("/v1/apps/#{APP}/appPricePoints?filter[territory]=USA&limit=200").find { |p| p.dig("attributes", "customerPrice").to_f == 0.0 } rescue (puts "✗ price points: #{$!.message[0,200]}"; nil))
   if free
     ok("price free", api("POST", "/v1/appPriceSchedules", {
       data: { type: "appPriceSchedules",
@@ -116,8 +118,8 @@ when "setup"
   end
 
   # 4. available in every country (and new ones later)
-  terr = all("/v1/territories?limit=200").map { |t| t["id"] }
-  r = api("POST", "/v2/appAvailabilities", {
+  terr = (all("/v1/territories?limit=200").map { |t| t["id"] } rescue (puts "✗ territories: #{$!.message[0,200]}"; []))
+  r = terr.empty? ? { "error" => "skip", "errors" => [] } : api("POST", "/v2/appAvailabilities", {
     data: { type: "appAvailabilities", attributes: { availableInNewTerritories: true },
             relationships: { app: { data: { type: "apps", id: APP } },
                              territoryAvailabilities: { data: terr.each_with_index.map { |_, i| { type: "territoryAvailabilities", id: "${t#{i}}" } } } } },
