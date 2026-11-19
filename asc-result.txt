@@ -1,13 +1,12 @@
-app info 5b36c1c1-65cb-4f98-ac6d-59c8c860aea1 {"appStoreState":"PREPARE_FOR_SUBMISSION","state":"PREPARE_FOR_SUBMISSION","appStoreAgeRating":null}
-✓ privacy URL ar-SA (subtitle was "تحليل وألغاز وافتتاحيات")
-age rating fields: advertising,alcoholTobaccoOrDrugUseOrReferences,contests,gambling,gamblingSimulated,gunsOrOtherWeapons,healthOrWellnessTopics,kidsAgeBand,lootBox,medicalOrTreatmentInformation,messagingAndChat,parentalControls,profanityOrCrudeHumor,ageAssurance,sexualContentGraphicAndNudity,sexualContentOrNudity,socialMedia,socialMediaAgeRestricted,horrorOrFearThemes,matureOrSuggestiveThemes,unrestrictedWebAccess,userGeneratedContent,violenceCartoonOrFantasy,violenceRealisticProlongedGraphicOrSadistic,violenceRealistic,ageRatingOverride,ageRatingOverrideV2,koreaAgeRatingOverride,gracRatingClassificationNumber,developerAgeRatingInfoUrl
-✓ age rating
-✓ price free
-✓ available in 175 countries
+✓ version 1.0.18 created
 ✓ release automatically after approval
-build 18 state=VALID encryption=false
-version 1.0.14: {"appStoreState":"PREPARE_FOR_SUBMISSION","appVersionState":"PREPARE_FOR_SUBMISSION","releaseType":"AFTER_APPROVAL"}
-availability: {"availableInNewTerritories":true}
-price schedule: set
-age rating now: {"advertising":true,"alcoholTobaccoOrDrugUseOrReferences":"NONE","contests":"NONE","gambling":false,"gamblingSimulated":"NONE","gunsOrOtherWeapons":"NONE","healthOrWellnessTopics":false,"kidsAgeBand":null,"lootBox":false,"medicalOrTreatmentInformation":"NONE","messagingAndChat":true,"parentalControls":false,"profanityOrCrudeHumor":"NONE","ageAssurance":false,"sexualContentGraphicAndNudity":"NONE","sexualContentOrNudity":"NONE","socialMedia":false,"socialMediaAgeRestricted":false,"horrorOrFearThemes":"NONE","matureOrSuggestiveThemes":"NONE","unrestrictedWebAccess":false,"userGeneratedContent":true,"violenceCartoonOrFantasy":"NONE","violenceRealisticProlongedGraphicOrSadistic":"NONE","violenceRealistic":"NONE","ageRatingOverride":"NONE","ageRatingOverrideV2":"NONE","koreaAgeRatingOverride":"NONE","gracRatingClassificationNumber":null,"developerAgeRatingInfoUrl":null}
-exit 0 Tue Nov 17 21:15:56 UTC 2026
+✓ what's new ar-SA
+builds: 
+builds: 
+builds: 
+builds: 31=VALID
+✓ build 31 attached
+✓ version added
+✓ SENT FOR REVIEW
+version 1.0.18: {"appStoreState":"WAITING_FOR_REVIEW","appVersionState":"WAITING_FOR_REVIEW"}
+exit 0 Thu Nov 19 19:22:16 UTC 2026
