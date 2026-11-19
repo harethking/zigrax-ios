@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "setup or submit"
+        description: "setup, submit or release"
         default: setup
 
 permissions:
@@ -16,7 +16,7 @@ permissions:
 jobs:
   asc:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
       - name: Run

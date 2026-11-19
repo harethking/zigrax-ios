@@ -1,7 +1,9 @@
 # App Store Connect listing settings through the official API (no website session needed).
 #   ruby scripts/asc.rb setup    -> privacy policy URL, age rating, free price in every country,
 #                                   export compliance on the build, release after approval, status report
-#   ruby scripts/asc.rb submit   -> sends version 1.0.14 for App Review
+#   ruby scripts/asc.rb submit   -> sends version VERSION for App Review
+#   ruby scripts/asc.rb release  -> new version VERSION: what's new text, waits for the uploaded build,
+#                                   attaches it, release after approval, then sends it for App Review
 # Needs ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH in the environment.
 require "openssl"
 require "base64"
@@ -10,7 +12,11 @@ require "net/http"
 require "uri"
 
 APP = "6835940613"
-VERSION = "1.0.14"
+VERSION = "1.0.18"
+WHATS_NEW = {
+  "ar" => "• شجرة الافتتاح: شجرة حقيقية بكل التفرعات، تتلوّن بالأخضر كلما أتقنت خطاً\n• أفخاخ مشهورة في كل افتتاح: شاهدها وتدرّب على نصبها أو تجنّبها\n• «مبارياتي»: اربط حسابك في Chess.com أو Lichess مرة واحدة وتصلك كل مبارياتك تلقائياً\n• حفظ التحليل: دقة كل مباراة تظهر بدون إعادة التحليل\n• زر «حلّل من هنا» في الافتتاحيات\n• بطولات برابط مشاركة، وتحسينات كثيرة",
+  "en" => "• Opening tree: a real tree of every line, turning green as you master them\n• Famous traps in every opening: watch them, then practise setting or avoiding them\n• My games: link Chess.com or Lichess once and your games arrive automatically\n• Saved analyses: each game's accuracy shows without re-analysing\n• \"Analyse from here\" button in openings\n• Tournament share links and many improvements"
+}
 PRIVACY = "https://zigrax-legal.vercel.app/privacy-policy.html"
 SUBTITLE = "تحليل وألغاز وافتتاحيات"
 
@@ -158,6 +164,45 @@ when "setup"
   puts "price schedule: #{ps['error'] ? ps['errors'].join(' | ') : 'set'}"
   ar2 = api("GET", "/v1/appInfos/#{info['id']}/ageRatingDeclaration")
   puts "age rating now: #{ar2.dig('data', 'attributes').to_json}" unless ar2["error"]
+when "release"
+  # 1. the version (created if missing) and its "what's new" text
+  v = version
+  unless v
+    r = api("POST", "/v1/appStoreVersions", { data: { type: "appStoreVersions", attributes: { platform: "IOS", versionString: VERSION, releaseType: "AFTER_APPROVAL" },
+                                                      relationships: { app: { data: { type: "apps", id: APP } } } } })
+    ok("version #{VERSION} created", r) or exit 1
+    v = r["data"]
+  end
+  ok("release automatically after approval", api("PATCH", "/v1/appStoreVersions/#{v['id']}", { data: { type: "appStoreVersions", id: v["id"], attributes: { releaseType: "AFTER_APPROVAL" } } }))
+  all("/v1/appStoreVersions/#{v['id']}/appStoreVersionLocalizations").each do |l|
+    loc = l.dig("attributes", "locale")
+    txt = loc.start_with?("ar") ? WHATS_NEW["ar"] : WHATS_NEW["en"]
+    ok("what's new #{loc}", api("PATCH", "/v1/appStoreVersionLocalizations/#{l['id']}", { data: { type: "appStoreVersionLocalizations", id: l["id"], attributes: { whatsNew: txt } } }))
+  end
+  # 2. wait for the uploaded build of this version to finish processing (up to ~35 min)
+  bd = nil
+  70.times do
+    bs = all("/v1/builds?filter[app]=#{APP}&filter[preReleaseVersion.version]=#{VERSION}&sort=-uploadedDate&limit=5")
+    bd = bs.find { |b| b.dig("attributes", "processingState") == "VALID" }
+    puts "builds: #{bs.map { |b| "#{b.dig('attributes', 'version')}=#{b.dig('attributes', 'processingState')}" }.join(', ')}"
+    break if bd || bs.any? { |b| %w[FAILED INVALID].include?(b.dig("attributes", "processingState")) }
+    sleep 30
+  end
+  abort("no processed build for #{VERSION}") unless bd
+  if bd.dig("attributes", "usesNonExemptEncryption").nil?
+    ok("export compliance (standard HTTPS only)", api("PATCH", "/v1/builds/#{bd['id']}", { data: { type: "builds", id: bd["id"], attributes: { usesNonExemptEncryption: false } } }))
+  end
+  ok("build #{bd.dig('attributes', 'version')} attached", api("PATCH", "/v1/appStoreVersions/#{v['id']}/relationships/build", { data: { type: "builds", id: bd["id"] } })) or exit 1
+  # 3. send it for review
+  open = all("/v1/reviewSubmissions?filter[app]=#{APP}&filter[platform]=IOS").find { |s| %w[READY_FOR_REVIEW UNRESOLVED_ISSUES].include?(s.dig("attributes", "state")) }
+  sub = open || api("POST", "/v1/reviewSubmissions", { data: { type: "reviewSubmissions", attributes: { platform: "IOS" }, relationships: { app: { data: { type: "apps", id: APP } } } } })["data"]
+  abort("could not open a review submission") unless sub
+  if all("/v1/reviewSubmissions/#{sub['id']}/items").empty?
+    ok("version added", api("POST", "/v1/reviewSubmissionItems", { data: { type: "reviewSubmissionItems", relationships: {
+      reviewSubmission: { data: { type: "reviewSubmissions", id: sub["id"] } }, appStoreVersion: { data: { type: "appStoreVersions", id: v["id"] } } } } })) or exit 1
+  end
+  ok("SENT FOR REVIEW", api("PATCH", "/v1/reviewSubmissions/#{sub['id']}", { data: { type: "reviewSubmissions", id: sub["id"], attributes: { submitted: true } } })) or exit 1
+  puts "version #{VERSION}: #{version&.dig('attributes').to_h.slice('appStoreState', 'appVersionState').to_json}"
 when "submit"
   v = version or abort("no version #{VERSION}")
   open = all("/v1/reviewSubmissions?filter[app]=#{APP}&filter[platform]=IOS").find { |s| %w[READY_FOR_REVIEW UNRESOLVED_ISSUES].include?(s.dig("attributes", "state")) }
@@ -172,5 +217,5 @@ when "submit"
   ok("SENT FOR REVIEW", api("PATCH", "/v1/reviewSubmissions/#{sub['id']}", { data: { type: "reviewSubmissions", id: sub["id"], attributes: { submitted: true } } })) or exit 1
   puts "version #{VERSION}: #{version&.dig('attributes').to_h.slice('appStoreState', 'appVersionState').to_json}"
 else
-  abort "usage: asc.rb setup|submit"
+  abort "usage: asc.rb setup|submit|release"
 end

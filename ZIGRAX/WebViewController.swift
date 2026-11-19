@@ -21,7 +21,7 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
     /// zigrax://g?m=..&w=..  or  https://…#m=..&w=..  → "m=..&w=.."
     static func gameQuery(_ url: URL) -> String? {
         let q = url.scheme == "zigrax" ? url.query : url.fragment
-        guard let s = q, s.contains("m=") else { return nil }
+        guard let s = q, s.contains("m=") || s.contains("tour=") else { return nil }
         return s
     }
 
