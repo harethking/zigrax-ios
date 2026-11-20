@@ -172,6 +172,8 @@ when "setup"
   puts "price schedule: #{ps['error'] ? ps['errors'].join(' | ') : 'set'}"
   ar2 = api("GET", "/v1/appInfos/#{info['id']}/ageRatingDeclaration")
   puts "age rating now: #{ar2.dig('data', 'attributes').to_json}" unless ar2["error"]
+when "status"
+  all("/v1/apps/#{APP}/appStoreVersions?limit=5").each { |v| puts "#{v.dig('attributes', 'versionString')}: #{v.dig('attributes', 'appStoreState')}" }
 when "release"
   # 1. the version (created if missing) and its "what's new" text
   v = version
@@ -225,5 +227,5 @@ when "submit"
   ok("SENT FOR REVIEW", api("PATCH", "/v1/reviewSubmissions/#{sub['id']}", { data: { type: "reviewSubmissions", id: sub["id"], attributes: { submitted: true } } })) or exit 1
   puts "version #{VERSION}: #{version&.dig('attributes').to_h.slice('appStoreState', 'appVersionState').to_json}"
 else
-  abort "usage: asc.rb setup|submit|release"
+  abort "usage: asc.rb setup|submit|release|status"
 end
