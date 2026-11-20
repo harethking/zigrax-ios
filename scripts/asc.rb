@@ -13,6 +13,8 @@ require "uri"
 
 APP = "6835940613"
 VERSION = "1.0.18"
+# App Store search keywords (max 100 characters, no spaces, no words already in the app name, no other apps' names)
+KEYWORDS = "شطرنج,chess,stockfish,ستوكفيش,ألغاز,لغز,puzzles,افتتاحيات,openings,zigrax,بطولات,مباريات,كش,ملك"
 WHATS_NEW = {
   "ar" => "• شجرة الافتتاح: شجرة حقيقية بكل التفرعات، تتلوّن بالأخضر كلما أتقنت خطاً\n• أفخاخ مشهورة في كل افتتاح: شاهدها وتدرّب على نصبها أو تجنّبها\n• «مبارياتي»: اربط حسابك في Chess.com أو Lichess مرة واحدة وتصلك كل مبارياتك تلقائياً\n• حفظ التحليل: دقة كل مباراة تظهر بدون إعادة التحليل\n• زر «حلّل من هنا» في الافتتاحيات\n• بطولات برابط مشاركة، وتحسينات كثيرة",
   "en" => "• Opening tree: a real tree of every line, turning green as you master them\n• Famous traps in every opening: watch them, then practise setting or avoiding them\n• My games: link Chess.com or Lichess once and your games arrive automatically\n• Saved analyses: each game's accuracy shows without re-analysing\n• \"Analyse from here\" button in openings\n• Tournament share links and many improvements"
@@ -177,7 +179,7 @@ when "release"
   all("/v1/appStoreVersions/#{v['id']}/appStoreVersionLocalizations").each do |l|
     loc = l.dig("attributes", "locale")
     txt = loc.start_with?("ar") ? WHATS_NEW["ar"] : WHATS_NEW["en"]
-    ok("what's new #{loc}", api("PATCH", "/v1/appStoreVersionLocalizations/#{l['id']}", { data: { type: "appStoreVersionLocalizations", id: l["id"], attributes: { whatsNew: txt, marketingUrl: "https://zigrax.com" } } }))   # marketing URL = developer website: AdMob reads zigrax.com/app-ads.txt
+    ok("what's new #{loc}", api("PATCH", "/v1/appStoreVersionLocalizations/#{l['id']}", { data: { type: "appStoreVersionLocalizations", id: l["id"], attributes: { whatsNew: txt, marketingUrl: "https://zigrax.com", keywords: KEYWORDS } } }))   # marketing URL = developer website: AdMob reads zigrax.com/app-ads.txt
   end
   # 2. wait for the uploaded build of this version to finish processing (up to ~35 min)
   bd = nil
