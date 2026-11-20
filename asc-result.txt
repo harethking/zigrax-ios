@@ -1,12 +1,4 @@
-✓ version 1.0.19 created
-✓ release automatically after approval
-✓ what's new ar-SA
-builds: 
-builds: 
-builds: 
-builds: 37=VALID
-✓ build 37 attached
-✓ version added
-✓ SENT FOR REVIEW
-version 1.0.19: {"appStoreState":"WAITING_FOR_REVIEW","appVersionState":"WAITING_FOR_REVIEW"}
-exit 0 Fri Nov 20 02:58:54 UTC 2026
+1.0.19: WAITING_FOR_REVIEW
+1.0.18: READY_FOR_SALE
+1.0.14: READY_FOR_SALE
+exit 0 Fri Nov 20 12:22:06 UTC 2026
