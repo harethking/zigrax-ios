@@ -12,12 +12,18 @@ require "net/http"
 require "uri"
 
 APP = "6835940613"
-VERSION = "1.0.18"
+VERSION = "1.0.19"
 # App Store search keywords (max 100 characters, no spaces, no words already in the app name, no other apps' names)
 KEYWORDS = "شطرنج,chess,stockfish,ستوكفيش,ألغاز,لغز,puzzles,افتتاحيات,openings,zigrax,بطولات,مباريات,كش,ملك"
 WHATS_NEW = {
-  "ar" => "• شجرة الافتتاح: شجرة حقيقية بكل التفرعات، تتلوّن بالأخضر كلما أتقنت خطاً\n• أفخاخ مشهورة في كل افتتاح: شاهدها وتدرّب على نصبها أو تجنّبها\n• «مبارياتي»: اربط حسابك في Chess.com أو Lichess مرة واحدة وتصلك كل مبارياتك تلقائياً\n• حفظ التحليل: دقة كل مباراة تظهر بدون إعادة التحليل\n• زر «حلّل من هنا» في الافتتاحيات\n• بطولات برابط مشاركة، وتحسينات كثيرة",
-  "en" => "• Opening tree: a real tree of every line, turning green as you master them\n• Famous traps in every opening: watch them, then practise setting or avoiding them\n• My games: link Chess.com or Lichess once and your games arrive automatically\n• Saved analyses: each game's accuracy shows without re-analysing\n• \"Analyse from here\" button in openings\n• Tournament share links and many improvements"
+  "ar" => "• تلميح الافتتاحيات يعمل مع الإعلانات على الآيفون
+• إعلان التحليل لا يظهر فارغاً
+• شجرة افتتاح أوضح والرقعة بحجمها الكامل في الشجرة والأفخاخ
+• تحسينات وإصلاحات",
+  "en" => "• Openings hint works with ads on iPhone
+• No more empty ad box while analysing
+• Clearer opening tree, full-size board in tree and traps
+• Improvements and fixes"
 }
 PRIVACY = "https://zigrax-legal.vercel.app/privacy-policy.html"
 SUBTITLE = "تحليل وألغاز وافتتاحيات"
