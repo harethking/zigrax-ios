@@ -177,7 +177,7 @@ when "release"
   all("/v1/appStoreVersions/#{v['id']}/appStoreVersionLocalizations").each do |l|
     loc = l.dig("attributes", "locale")
     txt = loc.start_with?("ar") ? WHATS_NEW["ar"] : WHATS_NEW["en"]
-    ok("what's new #{loc}", api("PATCH", "/v1/appStoreVersionLocalizations/#{l['id']}", { data: { type: "appStoreVersionLocalizations", id: l["id"], attributes: { whatsNew: txt } } }))
+    ok("what's new #{loc}", api("PATCH", "/v1/appStoreVersionLocalizations/#{l['id']}", { data: { type: "appStoreVersionLocalizations", id: l["id"], attributes: { whatsNew: txt, marketingUrl: "https://zigrax.com" } } }))   # marketing URL = developer website: AdMob reads zigrax.com/app-ads.txt
   end
   # 2. wait for the uploaded build of this version to finish processing (up to ~35 min)
   bd = nil
