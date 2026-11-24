@@ -57,6 +57,7 @@ targets:
         ZXAdUnits:
           puzzle_hint: $(ZX_AD_REWARDED)
           opening_hint: $(ZX_AD_REWARDED)
+          explain_ad: $(ZX_AD_REWARDED)
         CFBundleURLTypes:
           - CFBundleURLName: com.hareth.zigrax.links
             CFBundleURLSchemes: [zigrax]
