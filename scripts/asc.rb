@@ -12,18 +12,23 @@ require "net/http"
 require "uri"
 
 APP = "6835940613"
-VERSION = "1.0.22"
+VERSION = "1.0.23"
+OLD_VERSION = "1.0.22"   # still in review: "swap" pulls it back and turns it into VERSION
 # App Store search keywords (max 100 characters, no spaces, no words already in the app name, no other apps' names)
 KEYWORDS = "شطرنج,chess,stockfish,ستوكفيش,ألغاز,لغز,puzzles,افتتاحيات,openings,zigrax,بطولات,مباريات,كش,ملك"
 WHATS_NEW = {
-  "ar" => "• جديد: التحليل مع مدرب شخصي يشرح كل نقلة، مع تمارين من أخطائك
+  "ar" => "• جديد: إشعارات للرسائل وطلبات الصداقة ودعوات اللعب، وتذكير يومي
+• شرح النقلة في الافتتاحيات من النجمة مع رأي المحرك
+• جديد: التحليل مع مدرب شخصي يشرح كل نقلة، مع تمارين من أخطائك
 • استيراد وضعية من صورة أو لقطة شاشة
 • التصنيفات: FIDE و Chess.com للعراق والوطن العربي والعالم
 • مراقبة لاعب: إحصائيات أسلوبه وافتتاحياته وخطة للفوز عليه
 • مدرّب أخطائي في الألغاز، ومشاركة تقرير المباراة كصورة
 • الدعم الفني داخل التطبيق، وافتتاحيات وجامبتات جديدة
 • تصنيف «مدهشة» أدق، وتحسينات وإصلاحات",
-  "en" => "• New: coach analysis that explains every move, with drills from your mistakes
+  "en" => "• New: notifications for messages, friend requests and game invites, plus a daily reminder
+• Opening move explainer (star) with the engine's verdict
+• New: coach analysis that explains every move, with drills from your mistakes
 • Import a position from a photo or screenshot
 • Rankings: FIDE and Chess.com for Iraq, the Arab world and the world
 • Scout a player: style stats, openings and a plan to beat them
@@ -180,7 +185,24 @@ when "setup"
   puts "age rating now: #{ar2.dig('data', 'attributes').to_json}" unless ar2["error"]
 when "status"
   all("/v1/apps/#{APP}/appStoreVersions?limit=5").each { |v| puts "#{v.dig('attributes', 'versionString')}: #{v.dig('attributes', 'appStoreState')}" }
-when "release"
+when "release", "swap"
+  # 0. swap: cancel the review of OLD_VERSION and rename that version to VERSION (Apple allows one version in progress)
+  if ARGV[0] == "swap" && !version
+    old = all("/v1/apps/#{APP}/appStoreVersions?filter[platform]=IOS").find { |x| x.dig("attributes", "versionString") == OLD_VERSION }
+    abort("no version #{OLD_VERSION}") unless old
+    puts "#{OLD_VERSION}: #{old.dig('attributes', 'appStoreState')}"
+    all("/v1/reviewSubmissions?filter[app]=#{APP}&filter[platform]=IOS").each do |s|
+      next unless %w[WAITING_FOR_REVIEW IN_REVIEW UNRESOLVED_ISSUES READY_FOR_REVIEW].include?(s.dig("attributes", "state"))
+      ok("review of #{OLD_VERSION} cancelled (#{s.dig('attributes', 'state')})", api("PATCH", "/v1/reviewSubmissions/#{s['id']}", { data: { type: "reviewSubmissions", id: s["id"], attributes: { canceled: true } } }))
+    end
+    30.times do
+      st = api("GET", "/v1/appStoreVersions/#{old['id']}").dig("data", "attributes", "appStoreState")
+      puts "state #{st}"
+      break if %w[DEVELOPER_REJECTED PREPARE_FOR_SUBMISSION REJECTED].include?(st)
+      sleep 20
+    end
+    ok("#{OLD_VERSION} renamed to #{VERSION}", api("PATCH", "/v1/appStoreVersions/#{old['id']}", { data: { type: "appStoreVersions", id: old["id"], attributes: { versionString: VERSION } } })) or exit 1
+  end
   # 1. the version (created if missing) and its "what's new" text
   v = version
   unless v
@@ -233,5 +255,5 @@ when "submit"
   ok("SENT FOR REVIEW", api("PATCH", "/v1/reviewSubmissions/#{sub['id']}", { data: { type: "reviewSubmissions", id: sub["id"], attributes: { submitted: true } } })) or exit 1
   puts "version #{VERSION}: #{version&.dig('attributes').to_h.slice('appStoreState', 'appVersionState').to_json}"
 else
-  abort "usage: asc.rb setup|submit|release|status"
+  abort "usage: asc.rb setup|submit|release|swap|status"
 end
