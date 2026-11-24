@@ -1,11 +1,11 @@
-✓ version 1.0.22 created
+1.0.22: WAITING_FOR_REVIEW
+✓ review of 1.0.22 cancelled (WAITING_FOR_REVIEW)
+state WAITING_FOR_REVIEW
+state DEVELOPER_REJECTED
+✓ 1.0.22 renamed to 1.0.23
 ✓ release automatically after approval
 ✓ what's new ar-SA
-builds: 
-builds: 
-builds: 50=VALID
-✓ build 50 attached
-✓ version added
-✓ SENT FOR REVIEW
-version 1.0.22: {"appStoreState":"WAITING_FOR_REVIEW","appVersionState":"WAITING_FOR_REVIEW"}
-exit 0 Tue Nov 24 10:36:00 UTC 2026
+builds: 54=VALID
+✓ build 54 attached
+✗ version added: 409 STATE_ERROR.ENTITY_STATE_INVALID: This resource cannot be reviewed, please check associated errors to see why. 
+exit 1 Tue Nov 24 19:57:45 UTC 2026
