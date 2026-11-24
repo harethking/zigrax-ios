@@ -12,18 +12,24 @@ require "net/http"
 require "uri"
 
 APP = "6835940613"
-VERSION = "1.0.19"
+VERSION = "1.0.22"
 # App Store search keywords (max 100 characters, no spaces, no words already in the app name, no other apps' names)
 KEYWORDS = "شطرنج,chess,stockfish,ستوكفيش,ألغاز,لغز,puzzles,افتتاحيات,openings,zigrax,بطولات,مباريات,كش,ملك"
 WHATS_NEW = {
-  "ar" => "• تلميح الافتتاحيات يعمل مع الإعلانات على الآيفون
-• إعلان التحليل لا يظهر فارغاً
-• شجرة افتتاح أوضح والرقعة بحجمها الكامل في الشجرة والأفخاخ
-• تحسينات وإصلاحات",
-  "en" => "• Openings hint works with ads on iPhone
-• No more empty ad box while analysing
-• Clearer opening tree, full-size board in tree and traps
-• Improvements and fixes"
+  "ar" => "• جديد: التحليل مع مدرب شخصي يشرح كل نقلة، مع تمارين من أخطائك
+• استيراد وضعية من صورة أو لقطة شاشة
+• التصنيفات: FIDE و Chess.com للعراق والوطن العربي والعالم
+• مراقبة لاعب: إحصائيات أسلوبه وافتتاحياته وخطة للفوز عليه
+• مدرّب أخطائي في الألغاز، ومشاركة تقرير المباراة كصورة
+• الدعم الفني داخل التطبيق، وافتتاحيات وجامبتات جديدة
+• تصنيف «مدهشة» أدق، وتحسينات وإصلاحات",
+  "en" => "• New: coach analysis that explains every move, with drills from your mistakes
+• Import a position from a photo or screenshot
+• Rankings: FIDE and Chess.com for Iraq, the Arab world and the world
+• Scout a player: style stats, openings and a plan to beat them
+• Blunder trainer in puzzles, share your game report as an image
+• In-app support chat, new openings and gambits
+• More accurate brilliant moves, improvements and fixes"
 }
 PRIVACY = "https://zigrax-legal.vercel.app/privacy-policy.html"
 SUBTITLE = "تحليل وألغاز وافتتاحيات"
