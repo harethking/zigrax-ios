@@ -1,11 +1,8 @@
-1.0.22: WAITING_FOR_REVIEW
-✓ review of 1.0.22 cancelled (WAITING_FOR_REVIEW)
-state WAITING_FOR_REVIEW
-state DEVELOPER_REJECTED
-✓ 1.0.22 renamed to 1.0.23
-✓ release automatically after approval
-✓ what's new ar-SA
-builds: 54=VALID
-✓ build 54 attached
-✗ version added: 409 STATE_ERROR.ENTITY_STATE_INVALID: This resource cannot be reviewed, please check associated errors to see why. 
-exit 1 Tue Nov 24 19:57:45 UTC 2026
+  submission 513aab34-5d64-4366-97de-c2944febe691 READY_FOR_REVIEW
+  submission c03dca46-50ed-43f1-b079-dc9810c6930b CANCELING
+  submission 52950d65-4917-4b0e-91d1-36300d5b2ffa COMPLETE
+  submission 6ee4c056-5685-4cd8-aa7c-917b6941197b COMPLETE
+  submission a61577ea-e8df-4d9f-abfe-aa119df5e926 COMPLETE
+submission 513aab34-5d64-4366-97de-c2944febe691 READY_FOR_REVIEW
+✗ version added: 409 STATE_ERROR.ENTITY_STATE_INVALID: This resource cannot be reviewed, please check associated errors to see why.  {"associatedErrors":{"/appStoreVersions/896012118":[{"id":"0012d311-51b2-4958-bef9-830ec3aed3eb","status":"409","code":"STATE_ERROR.ITEM_PART_OF_ANOTHER_SUBMISSION","title":"Item is already present in another reviewSubmission","detail":"appStoreVersions with id 896012118 was already added to another reviewSubmission with id c03dca46-50ed-43f1-b079-dc9810c6930b"}]}}
+exit 1 Tue Nov 24 19:58:52 UTC 2026
