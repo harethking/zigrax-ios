@@ -64,7 +64,7 @@ def api(method, path, body = nil)
   end
   data = res.body.to_s.empty? ? {} : JSON.parse(res.body)
   unless res.code.to_i < 300
-    errs = (data["errors"] || []).map { |e| "#{e['code']}: #{e['detail']} #{e.dig('source', 'pointer')}" }
+    errs = (data["errors"] || []).map { |e| "#{e['code']}: #{e['detail']} #{e.dig('source', 'pointer')} #{e['meta'] ? e['meta'].to_json[0, 1500] : ''}" }
     return { "error" => res.code, "errors" => errs }
   end
   data
@@ -246,6 +246,7 @@ when "submit"
   open = all("/v1/reviewSubmissions?filter[app]=#{APP}&filter[platform]=IOS").find { |s| %w[READY_FOR_REVIEW UNRESOLVED_ISSUES].include?(s.dig("attributes", "state")) }
   sub = open || api("POST", "/v1/reviewSubmissions", { data: { type: "reviewSubmissions", attributes: { platform: "IOS" }, relationships: { app: { data: { type: "apps", id: APP } } } } })["data"]
   abort("could not open a review submission") unless sub
+  all("/v1/reviewSubmissions?filter[app]=#{APP}&filter[platform]=IOS").first(6).each { |x| puts "  submission #{x['id']} #{x.dig('attributes', 'state')}" }
   puts "submission #{sub['id']} #{sub.dig('attributes', 'state')}"
   items = all("/v1/reviewSubmissions/#{sub['id']}/items")
   if items.empty?
