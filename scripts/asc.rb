@@ -243,6 +243,13 @@ when "release", "swap"
   puts "version #{VERSION}: #{version&.dig('attributes').to_h.slice('appStoreState', 'appVersionState').to_json}"
 when "submit"
   v = version or abort("no version #{VERSION}")
+  # a cancelled review stays "CANCELING" for a while; the version can join a new one only after that
+  60.times do
+    c = all("/v1/reviewSubmissions?filter[app]=#{APP}&filter[platform]=IOS").count { |x| x.dig("attributes", "state") == "CANCELING" }
+    break if c.zero?
+    puts "waiting: a cancelled review is still CANCELING"
+    sleep 30
+  end
   open = all("/v1/reviewSubmissions?filter[app]=#{APP}&filter[platform]=IOS").find { |s| %w[READY_FOR_REVIEW UNRESOLVED_ISSUES].include?(s.dig("attributes", "state")) }
   sub = open || api("POST", "/v1/reviewSubmissions", { data: { type: "reviewSubmissions", attributes: { platform: "IOS" }, relationships: { app: { data: { type: "apps", id: APP } } } } })["data"]
   abort("could not open a review submission") unless sub
