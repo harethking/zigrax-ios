@@ -24,6 +24,16 @@ when "setup"
     bid = Spaceship::ConnectAPI::BundleId.create(name: "ZIGRAX", platform: "IOS", identifier: BUNDLE)
     puts "registered bundle id #{BUNDLE}"
   end
+  # push notifications must be on for the bundle id before the profile is made (the profile carries aps-environment)
+  begin
+    caps = bid.get_capabilities.map(&:capability_type)
+    unless caps.include?("PUSH_NOTIFICATIONS")
+      bid.create_capability(Spaceship::ConnectAPI::BundleIdCapability::Type::PUSH_NOTIFICATIONS)
+      puts "push notifications turned on for #{BUNDLE}"
+    end
+  rescue => e
+    warn "push capability: #{e.message}"
+  end
 
   key = OpenSSL::PKey::RSA.new(2048)
   csr = OpenSSL::X509::Request.new

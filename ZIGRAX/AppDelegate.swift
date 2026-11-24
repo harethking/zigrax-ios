@@ -13,7 +13,17 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         w.rootViewController = vc
         w.makeKeyAndVisible()
         window = w
+        Push.shared.host = vc
+        Push.shared.start()
         return true
+    }
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Push.shared.gotToken(deviceToken)
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("push register failed", error)
     }
 
     // zigrax://g?m=...&w=...  (shared game links)

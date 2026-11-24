@@ -78,6 +78,7 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
             adBox.bottomAnchor.constraint(equalTo: g.bottomAnchor),
             adBoxHeight,
         ])
+        Push.shared.host = self
         load()
     }
 
@@ -101,6 +102,8 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
     }
 
     func sendToPage(_ fn: String, _ obj: [String: Any]) { sendCall(fn, obj) }
+    func callPage(_ fn: String, _ arg: Any) { sendCall(fn, arg) }
+    var isPageReady: Bool { pageReady }
 
     private func sendCall(_ fn: String, _ arg: Any) {
         let js = "window.\(fn)&&\(fn)(\(json(arg)))"
@@ -145,6 +148,7 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
         case "interstitial": ads.showInterstitial(slot: slot, test: test)
         case "rewarded": ads.showRewarded(slot: slot, test: test)
         case "privacyOptions": ads.privacyOptions()
+        case "ntAsk", "ntSetup", "ntTest": Push.shared.handle(m)
         default: break
         }
     }
@@ -172,6 +176,7 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         pageReady = webView.url?.scheme == AssetSchemeHandler.scheme
         for (k, v) in native { setNativeValue(k, v) }
+        if pageReady { Push.shared.pageReady() }
         if ProcessInfo.processInfo.arguments.contains("-zxSelfTest") { SelfTest.run(webView) }
     }
 
