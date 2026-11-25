@@ -1,33 +1,9 @@
-1.0.23: READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-state READY_FOR_SALE
-✗ 1.0.23 renamed to 1.0.30: 409 ENTITY_ERROR.ATTRIBUTE.INVALID.INVALID_STATE: The attribute 'versionString' can not be modified. /data/attributes/versionString 
-exit 1 Wed Nov 25 16:54:29 UTC 2026
+✓ version 1.0.30 created
+✓ release automatically after approval
+✓ what's new ar-SA
+builds: 66=VALID
+✓ build 66 attached
+✓ version added
+✓ SENT FOR REVIEW
+version 1.0.30: {"appStoreState":"WAITING_FOR_REVIEW","appVersionState":"WAITING_FOR_REVIEW"}
+exit 0 Wed Nov 25 16:56:07 UTC 2026
