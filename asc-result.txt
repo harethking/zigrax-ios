@@ -1,11 +1,33 @@
-waiting: a cancelled review is still CANCELING
-  submission 513aab34-5d64-4366-97de-c2944febe691 READY_FOR_REVIEW
-  submission c03dca46-50ed-43f1-b079-dc9810c6930b COMPLETE
-  submission 52950d65-4917-4b0e-91d1-36300d5b2ffa COMPLETE
-  submission 6ee4c056-5685-4cd8-aa7c-917b6941197b COMPLETE
-  submission a61577ea-e8df-4d9f-abfe-aa119df5e926 COMPLETE
-submission 513aab34-5d64-4366-97de-c2944febe691 READY_FOR_REVIEW
-✓ version added
-✓ SENT FOR REVIEW
-version 1.0.23: {"appStoreState":"WAITING_FOR_REVIEW","appVersionState":"WAITING_FOR_REVIEW"}
-exit 0 Tue Nov 24 20:00:33 UTC 2026
+1.0.23: READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+state READY_FOR_SALE
+✗ 1.0.23 renamed to 1.0.30: 409 ENTITY_ERROR.ATTRIBUTE.INVALID.INVALID_STATE: The attribute 'versionString' can not be modified. /data/attributes/versionString 
+exit 1 Wed Nov 25 16:54:29 UTC 2026
