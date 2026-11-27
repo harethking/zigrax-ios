@@ -12,33 +12,27 @@ require "net/http"
 require "uri"
 
 APP = "6835940613"
-VERSION = "1.0.30"
-OLD_VERSION = "1.0.23"   # still in review: "swap" pulls it back and turns it into VERSION
+VERSION = "1.0.48"
+OLD_VERSION = "1.0.30"   # still in review: "swap" pulls it back and turns it into VERSION
 # App Store search keywords (max 100 characters, no spaces, no words already in the app name, no other apps' names)
 KEYWORDS = "شطرنج,chess,stockfish,ستوكفيش,ألغاز,لغز,puzzles,افتتاحيات,openings,zigrax,بطولات,مباريات,كش,ملك"
 WHATS_NEW = {
-  "ar" => "• المدرب يشرح التكتيك اللي سمح بيه خطؤك (شوكة، تثبيت، سيخ…) وليش النقلة الأفضل أفضل
-• تحليل أسرع وأدق بـ Stockfish 19، ومجتمع زيكراكس على واتساب
-• جديد: إشعارات للرسائل وطلبات الصداقة ودعوات اللعب، وتذكير يومي
-• شرح النقلة في الافتتاحيات من النجمة مع رأي المحرك
-• جديد: التحليل مع مدرب شخصي يشرح كل نقلة، مع تمارين من أخطائك
-• استيراد وضعية من صورة أو لقطة شاشة
-• التصنيفات: FIDE و Chess.com للعراق والوطن العربي والعالم
-• مراقبة لاعب: إحصائيات أسلوبه وافتتاحياته وخطة للفوز عليه
-• مدرّب أخطائي في الألغاز، ومشاركة تقرير المباراة كصورة
-• الدعم الفني داخل التطبيق، وافتتاحيات وجامبتات جديدة
-• تصنيف «مدهشة» أدق، وإصلاح القائمة بالإنكليزي، وتحسينات وإصلاحات",
-  "en" => "• The coach names the tactic your mistake allowed (fork, pin, skewer…) and explains why the best move is best
-• Faster, deeper Stockfish 19 analysis, and the ZIGRAX WhatsApp community
-• New: notifications for messages, friend requests and game invites, plus a daily reminder
-• Opening move explainer (star) with the engine's verdict
-• New: coach analysis that explains every move, with drills from your mistakes
-• Import a position from a photo or screenshot
-• Rankings: FIDE and Chess.com for Iraq, the Arab world and the world
-• Scout a player: style stats, openings and a plan to beat them
-• Blunder trainer in puzzles, share your game report as an image
-• In-app support chat, new openings and gambits
-• More accurate brilliant moves, menu fix in English, improvements and fixes"
+  "ar" => "• جديد: «مستودعاتي» — جهّز افتتاحياتك بنفسك: شجرة، تحضير، أفخاخ وتدريب
+• أكثر من 70 فخ بالافتتاحيات
+• قسم الكتب: افتح أي كتاب PDF واضغط على أي رقعة حتى تحللها، ومكتبة مرتّبة
+• كتاب «الاستراتيجية في الشطرنج» مجاني: نسخة التطبيق ونسخة PDF تنزّلها وتشاركها
+• تحليل عميق جداً بـ Stockfish وتقييم أدق للنقلات
+• المراجعة مثل chess.com: سهم أخضر للنقلة الأفضل وأحمر للعقاب
+• سحب القطع بالإصبع وأسهم الشرح بالكلك اليمين
+• تحسينات وإصلاحات",
+  "en" => "• New: My repertoires — build your own openings: tree, preparation, traps and training
+• 70+ opening traps
+• Books: open any PDF chess book and tap any diagram to analyse it, in a tidy library
+• Free book “Chess Strategy”: app edition and a PDF you can download and share
+• Very deep Stockfish analysis and more accurate move ratings
+• Game review like chess.com: green arrow for the better move, red for the punishment
+• Drag pieces, and draw arrows with right-click
+• Improvements and fixes"
 }
 PRIVACY = "https://zigrax-legal.vercel.app/privacy-policy.html"
 SUBTITLE = "تحليل وألغاز وافتتاحيات"
