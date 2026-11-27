@@ -138,6 +138,17 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
                 pop.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.maxY - 80, width: 1, height: 1)
             }
             present(sheet, animated: true)
+        case "shareFile":
+            let name = ((m["name"] as? String) ?? "zigrax.pdf").replacingOccurrences(of: "/", with: "_")
+            guard let b64 = m["b64"] as? String, let data = Data(base64Encoded: b64, options: .ignoreUnknownCharacters) else { break }
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent(name)
+            do { try data.write(to: url, options: .atomic) } catch { break }
+            let sheet = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            if let pop = sheet.popoverPresentationController {   // iPad
+                pop.sourceView = view
+                pop.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.maxY - 80, width: 1, height: 1)
+            }
+            present(sheet, animated: true)
         case "open":
             if let s = m["url"] as? String, let u = URL(string: s), ["https", "http", "mailto", "itms-apps"].contains(u.scheme ?? "") {
                 UIApplication.shared.open(u)

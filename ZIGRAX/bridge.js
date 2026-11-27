@@ -11,7 +11,8 @@
   window.ZXiOS = {
     platform: "ios",
     share: function (text) { post({ fn: "share", text: String(text || "") }); },
-    open: function (url) { post({ fn: "open", url: String(url || "") }); }
+    open: function (url) { post({ fn: "open", url: String(url || "") }); },
+    shareFile: function (b64, name, mime, text) { post({ fn: "shareFile", b64: String(b64 || ""), name: String(name || "zigrax.pdf"), text: String(text || "") }); }
   };
   // notifications: the same API as Android (see Push.swift); state() is kept current by Swift
   st.notif = "ask";
