@@ -1,6 +1,14 @@
-1.0.30: READY_FOR_SALE
-1.0.23: READY_FOR_SALE
-1.0.19: READY_FOR_SALE
-1.0.18: READY_FOR_SALE
-1.0.14: READY_FOR_SALE
-exit 0 Fri Nov 27 18:55:40 UTC 2026
+✓ version 1.0.48 created
+✓ release automatically after approval
+✓ what's new ar-SA
+builds: 
+builds: 
+builds: 
+builds: 
+builds: 
+builds: 90=VALID
+✓ build 90 attached
+✓ version added
+✓ SENT FOR REVIEW
+version 1.0.48: {"appStoreState":"WAITING_FOR_REVIEW","appVersionState":"WAITING_FOR_REVIEW"}
+exit 0 Fri Nov 27 19:05:04 UTC 2026
